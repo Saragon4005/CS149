@@ -34,17 +34,31 @@ int main(int argc, char* argv[]) {
   for (int i = 1; fgets(buffer, NAME_LENGTH, fp) != NULL; i++) {
     buffer[strcspn(buffer, "\n")] = '\0';
     // remove trailing newline character
+    // discard line if empty (emmit warning)
     if (strlen(buffer) < 1) {
       fprintf(stderr, "Warning - Line %d is empty.\n", i);
       continue;
     }
     // printf("Line %d: %s\n", i, buffer);
+    // loop through names comparing with the one read in
+    for (int j = 0; j < NUM_NAMES; j++) {  // break out of code internally
+      if (counts[j] == 0) {                // name not seen before
+        strcpy(names[j], buffer);
+        counts[j] = 1;
+        break;
+      }
+      if (strcmp(names[j], buffer) == 0) {
+        counts[j]++;
+        break;
+      }
+    }
+    if (counts[NUM_NAMES - 1] != 0) {
+      fprintf(stderr,
+              "Warning: Buffer is full. Unable to read more names starting at "
+              "line %d\n",
+              i);
+    }
   }
-
-  // discard line if empty (emmit warning)
-  // loop through names comparing with the one read in
-  // some mechanism to check if its not been seen (check for default? or
-  // counter)
 
   return 0;
 }
