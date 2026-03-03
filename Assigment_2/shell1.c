@@ -1,30 +1,36 @@
-#include "apue.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/wait.h>
+#include <unistd.h>
 
-int
-main(void)
-{
-	char	buf[MAXLINE];	/* from apue.h */
-	pid_t	pid;
-	int		status;
+#define MAXLINE 1024
 
-	printf("%% ");	/* print prompt (printf requires %% to print %) */
-	while (fgets(buf, MAXLINE, stdin) != NULL) {
-		if (buf[strlen(buf) - 1] == '\n')
-			buf[strlen(buf) - 1] = 0; /* replace newline with null */
+int main(void) {
+  char buf[MAXLINE];
+  pid_t pid;
+  int status;
 
-		if ((pid = fork()) < 0) {
-			err_sys("fork error");
-		} else if (pid == 0) {		/* child */
-			execlp(buf, buf, (char *)0);
-			err_ret("couldn't execute: %s", buf);
-			exit(127);
-		}
+  printf("%% "); /* print prompt (printf requires %% to print %) */
+  while (fgets(buf, MAXLINE, stdin) != NULL) {
+    if (buf[strlen(buf) - 1] == '\n')
+      buf[strlen(buf) - 1] = 0; /* replace newline with null */
 
-		/* parent */
-		if ((pid = waitpid(pid, &status, 0)) < 0)
-			err_sys("waitpid error");
-		printf("%% ");
-	}
-	exit(0);
+    if ((pid = fork()) < 0) {
+      perror("fork error");
+      exit(1);
+    } else if (pid == 0) { /* child */
+      execlp(buf, buf, (char *)0);
+      fprintf(stderr, "couldn't execute: %s\n", buf);
+      exit(127);
+    }
+
+    /* parent */
+    if ((pid = waitpid(pid, &status, 0)) < 0) {
+      perror("waitpid error");
+      exit(1);
+    }
+    printf("%% ");
+  }
+  exit(0);
 }
