@@ -28,7 +28,7 @@ int main(void) {
       }
       else if (pid == 0) { /* child */
         execlp(bin, bin, filename, (char *)0);
-        fprintf(stderr, "couldn't execute: %s\n", buf);
+        fprintf(stderr, "couldn't execute: %s\n", bin);
         exit(127);
       }
     }
