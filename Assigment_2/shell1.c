@@ -1,3 +1,14 @@
+/**
+ * Description: Reads a line of text containing a binary file, followed by N test files.
+ *              each test file is then forked seperately and run.
+ *              example input line: foo a1 a2 a3 
+ *              would work 3 "foo"s with one of the a1/a2/a3 set of file names
+ * Author names: Steve Rubin, Raven Keszei
+ * Author emails: steven.rubin@sjsu.edu, raven.keszei@sjsu.edu
+ * Last modified date: 3/4/26
+ * Creation date: 3/4/26
+ **/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -28,7 +39,7 @@ int main(void) {
       }
       else if (pid == 0) { /* child */
         execlp(bin, bin, filename, (char *)0);
-        fprintf(stderr, "couldn't execute: %s\n", bin);
+        fprintf(stderr, "couldn't execute: %s\n", buf);
         exit(127);
       }
     }

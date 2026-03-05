@@ -3,8 +3,8 @@
  *              Names > 30 characters are truncated with a warning.  Empty lines are skipped with a warning.
  *              Output is a list of line contents and occurrence counts.
  *              Output is to PID.err and PID.out for stderr and stdout, PID is the current process id
- * Author names: Steve Rubin 
- * Author emails: steven.rubin@sjsu.edu
+ * Author names: Steve Rubin, Raven Keszei
+ * Author emails: steven.rubin@sjsu.edu, raven.keszei@sjsu.edu
  * Last modified date: 3/4/26
  * Creation date: 2/11/26
  **/

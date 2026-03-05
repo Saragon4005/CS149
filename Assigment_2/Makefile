@@ -8,4 +8,4 @@ all: $(TARGETS)
 	$(CC) $(CFLAGS) -o $@ $<
 
 clean:
-	rm -f $(TARGETS)
+	rm -f $(TARGETS) *.err *.out
