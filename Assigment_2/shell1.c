@@ -15,16 +15,23 @@ int main(void) {
   while (fgets(buf, MAXLINE, stdin) != NULL) {
     if (buf[strlen(buf) - 1] == '\n')
       buf[strlen(buf) - 1] = 0; /* replace newline with null */
+    char *bin = strtok(buf, " "); // extract binary name
 
-    if ((pid = fork()) < 0) {
-      perror("fork error");
-      exit(1);
-    } else if (pid == 0) { /* child */
-      execlp(buf, buf, (char *)0);
-      fprintf(stderr, "couldn't execute: %s\n", buf);
-      exit(127);
+    char *filename;
+    while ((filename = strtok(NULL, " ")) != NULL) {
+
+
+
+      if ((pid = fork()) < 0) {
+        perror("fork error");
+        exit(1);
+      }
+      else if (pid == 0) { /* child */
+        execlp(bin, bin, filename, (char *)0);
+        fprintf(stderr, "couldn't execute: %s\n", bin);
+        exit(127);
+      }
     }
-
     /* parent */
     if ((pid = waitpid(pid, &status, 0)) < 0) {
       perror("waitpid error");
