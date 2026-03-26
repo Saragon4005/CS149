@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
   } else if (argc == 1) { // input from stdin
     fp = stdin;
   } else { // invalid arguments
-    printf("Usage: %s [filename]\n", argv[0]);
+    fprintf(stderr, "Usage: %s [filename]\n", argv[0]);
     return 1;
   }
   // pid.out

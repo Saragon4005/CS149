@@ -45,7 +45,7 @@ void name_count(NameCountData *data) {
   NameCountEntry *cur = nameCountList;
 
   while (cur) {
-    if (strcmp(cur->name, data->name) == 0) {
+    if (strncmp(cur->name, data->name, MAX_NAME_LENGTH) == 0) {
       cur->count += data->count;
       return;
     }
@@ -105,6 +105,10 @@ int main(void) {
         exit(1);
       } else if (pid == 0) { /* child */
         close(pipefd[0]);
+        // close unused inherited pipe FDs from previous children
+        for (int j = 0; j < num_children; j++) {
+          close(readFds[j]);
+        }
         dup2(pipefd[1], STDOUT_FILENO); // stdout to pipe write end
         close(pipefd[1]);
         execlp(bin, bin, filename, (char *)0);
@@ -119,9 +123,18 @@ int main(void) {
     /* parent: read from all pipes */
     for (int i = 0; i < num_children; i++) {
       NameCountData data;
-      while (read(readFds[i], &data, sizeof(NameCountData)) ==
-             sizeof(NameCountData)) {
-        name_count(&data);
+      int bytes_read;
+      int total_read = 0;
+      char *ptr = (char *)&data;
+
+      while ((bytes_read = read(readFds[i], ptr + total_read,
+                                sizeof(NameCountData) - total_read)) > 0) {
+        total_read += bytes_read;
+        // Process data if memory struct size is fully read
+        if (total_read == sizeof(NameCountData)) {
+          name_count(&data);
+          total_read = 0; // reset for next struct
+        }
       }
       close(readFds[i]);
     }
