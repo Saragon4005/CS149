@@ -45,17 +45,6 @@ int main(int argc, char *argv[]) {
   int lines = 0;         // current line number, only used for error messages
   char *errFileName, *outFileName;
 
-  if (argc == 2) {
-    if ((fp = fopen(argv[1], "r")) == NULL) {
-      fprintf(stderr, "error: cannot open file %s\n", argv[1]);
-      return 1;
-    }
-  } else if (argc == 1) { // input from stdin
-    fp = stdin;
-  } else { // invalid arguments
-    fprintf(stderr, "Usage: %s [filename]\n", argv[0]);
-    return 1;
-  }
   // pid.out
   asprintf(&outFileName, "%ld.out", (long)getpid());
   if ((fpout = fopen(outFileName, "w")) == NULL) {
@@ -70,6 +59,18 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, "Error redirecting stderr to %s\n", errFileName);
   }
   free(errFileName); // free the buffer returned by asprintf
+
+  if (argc == 2) {
+    if ((fp = fopen(argv[1], "r")) == NULL) {
+      fprintf(stderr, "error: cannot open file %s\n", argv[1]);
+      return 1;
+    }
+  } else if (argc == 1) { // input from stdin
+    fp = stdin;
+  } else { // invalid arguments
+    fprintf(stderr, "Usage: %s [filename]\n", argv[0]);
+    return 1;
+  }
 
   while (
       fgets(buf, sizeof(buf), fp)) { // read input until empty and add to list
