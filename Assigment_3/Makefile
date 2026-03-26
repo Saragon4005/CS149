@@ -7,5 +7,8 @@ all: $(TARGETS)
 %: %.c
 	$(CC) $(CFLAGS) -o $@ $<
 
-clean:
+clean: clean-logs
 	rm -f $(TARGETS)
+
+clean-logs:
+	rm -f *.out *.err
