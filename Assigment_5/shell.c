@@ -15,6 +15,7 @@
  * Last modified date: 4/13/26
  * Creation date: 3/4/26
  **/
+#define _GNU_SOURCE
 
 #include <stdio.h>
 #include <stdlib.h>

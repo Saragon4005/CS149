@@ -11,5 +11,6 @@
 		"scanf",
 		"strerror",
 		"Werror"
-	]
+	],
+	"editor.formatOnSave": false
 }

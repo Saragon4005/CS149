@@ -14,6 +14,8 @@
  * Creation date: 2/11/26
  **/
 
+#define _GNU_SOURCE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
