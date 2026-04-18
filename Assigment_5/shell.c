@@ -196,7 +196,10 @@ int main(void) {
       remaining--;
 
       char *childFile;
-      asprintf(&childFile, "%ld.out", (long)finished);
+      if (asprintf(&childFile, "%ld.out", (long)finished) == -1) {
+         perror("asprintf");
+         exit(1);
+      }
       int fd = open(childFile, O_RDONLY);
       free(childFile);
       if (fd < 0) continue;

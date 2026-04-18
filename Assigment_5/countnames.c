@@ -54,9 +54,18 @@ int main(int argc, char *argv[]) {
    }
 
    /* Redirect stderr to {PID}.err for warnings */
-   asprintf(&errFileName, "%ld.err", (long)getpid());
-   if (dup2(open(errFileName, O_WRONLY | O_CREAT | O_TRUNC, 0666), STDERR_FILENO) == -1)
-      fprintf(stderr, "Error redirecting stderr to %s\n", errFileName);
+   if (asprintf(&errFileName, "%ld.err", (long)getpid()) == -1) {
+      fprintf(stderr, "error: asprintf failed\n");
+      exit(1);
+   }
+   int errFd = open(errFileName, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+   if (errFd != -1) {
+      if (dup2(errFd, STDERR_FILENO) == -1)
+         fprintf(stderr, "Error redirecting stderr to %s\n", errFileName);
+      close(errFd);
+   } else {
+      fprintf(stderr, "Error opening stderr file %s\n", errFileName);
+   }
    free(errFileName);
 
    /* Read lines with getline */
@@ -86,7 +95,10 @@ int main(int argc, char *argv[]) {
    }
 
    /* Write name counts to PID.out */
-   asprintf(&outFileName, "%ld.out", (long)getpid());
+   if (asprintf(&outFileName, "%ld.out", (long)getpid()) == -1) {
+      fprintf(stderr, "error: asprintf failed\n");
+      exit(1);
+   }
    int fd = open(outFileName, O_RDWR | O_CREAT | O_TRUNC, 0666);
    free(outFileName);
    ftruncate(fd, mmapSize);
