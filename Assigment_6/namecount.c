@@ -140,10 +140,13 @@ void freeTable() {
 // reads a file line by line and inserts names into the table. 
 void *countNamesThread(void *arg) {
    const char *filename = (const char *)arg;
-   FILE *fp = fopen(filename, "r");
-   if (!fp) {
-      fprintf(stderr, "error: cannot open file %s\n", filename);
-      return NULL;
+   FILE *fp = stdin;
+   if (filename) {
+      fp = fopen(filename, "r");
+      if (!fp) {
+         fprintf(stderr, "error: cannot open file %s\n", filename);
+         return NULL;
+      }
    }
 
    char *line = NULL;
@@ -157,13 +160,13 @@ void *countNamesThread(void *arg) {
       if (nread > 0 && line[nread - 1] == '\n')
          line[--nread] = '\0';
       if (nread == 0) {
-         fprintf(stderr, "Warning - %s line %d is empty.\n", filename, lineNum);
+         fprintf(stderr, "Warning - %s line %d is empty.\n", filename ? filename : "stdin", lineNum);
          continue;
       }
       insertName(line);
    }
 
    free(line);
-   fclose(fp);
+   if (fp != stdin) fclose(fp);
    return NULL;
 }

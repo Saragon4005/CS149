@@ -29,22 +29,18 @@
 #include "namecount.h"
 
 int main(int argc, char *argv[]) {
-   if (argc < 2) {
-      fprintf(stderr, "Usage: %s file1 [file2 ...]\n", argv[0]);
-      return 1;
-   }
-
-   int n = argc - 1;
+   int n = (argc == 1) ? 1 : (argc - 1);
    initTable();
 
    pthread_t *tids = malloc(n * sizeof(pthread_t)); // dynamic tids list
    if (!tids) { perror("malloc"); exit(1); }
 
    int created = 0;
-   for (int i = 0; i < n; i++) { // start thread for each file
-      int rc = pthread_create(&tids[created], NULL, countNamesThread, argv[i + 1]);
+   for (int i = 0; i < n; i++) { // start thread for each file or stdin
+      const char *filename = (argc == 1) ? NULL : argv[i + 1];
+      int rc = pthread_create(&tids[created], NULL, countNamesThread, (void *)filename);
       if (rc != 0) {
-         fprintf(stderr, "pthread_create failed for %s\n", argv[i + 1]);
+         fprintf(stderr, "pthread_create failed for %s\n", filename ? filename : "stdin");
          continue;
       }
       created++;
